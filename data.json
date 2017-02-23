@@ -1,0 +1,28 @@
+{
+  "stores" : {
+      "1" : {
+        "title" : "Title",
+        "address" : "Plain Adress",
+        "postCode" : "Post Code",
+        "phone" : "Phone",
+        "location": [
+                  {
+            "lat": "Latitude",
+            "lng": "Longtitude"
+      }
+    ]
+  },
+    "2" : {
+      "title" : "Title",
+      "address" : "Plain Adress",
+      "postCode" : "Post Code",
+      "phone" : "Phone",
+      "location": [
+        {
+          "lat": "Latitude",
+          "lng": "Longtitude"
+        }
+      ]
+    }
+}
+}
