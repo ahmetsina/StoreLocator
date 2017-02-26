@@ -3,8 +3,12 @@ var json;
 $.getJSON('data.json',function (data) {
     window.json = data;
 });
+var button = document.getElementById('findNearestButton');
+var input = document.getElementById('pac-input');
 
 function initMap() {
+
+
     map = new google.maps.Map(document.getElementById("map"),{
         center: { lat:-34.397, lng:150.644},
         zoom:7,
@@ -12,8 +16,53 @@ function initMap() {
         streetViewControl: false
     });
 
-    getCurrentLocation();
+    //getCurrentLocation();
+    button.addListener('click', function () {
+        alert("Yess!");
+        getCurrentLocation();
+    });
     setMapStyle(map);
+    var autocomplete = new google.maps.places.Autocomplete(input);
+
+    autocomplete.bindTo('bounds', map);
+
+    var infowindow = new google.maps.InfoWindow();
+
+    autocomplete.addListener('place_changed', function() {
+        infowindow.close();
+        marker.setVisible(false);
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+        }
+
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+        } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);  // Why 17? Because it looks good.
+        }
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+
+        var address = '';
+        if (place.address_components) {
+            address = [
+                (place.address_components[0] && place.address_components[0].short_name || ''),
+                (place.address_components[1] && place.address_components[1].short_name || ''),
+                (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+        }
+
+        infowindowContent.children['place-icon'].src = place.icon;
+        infowindowContent.children['place-name'].textContent = place.name;
+        infowindowContent.children['place-address'].textContent = address;
+        infowindow.open(map, marker);
+    });
 
     var stores = window.json.stores;
     console.log(stores.length);
@@ -35,7 +84,6 @@ function initMap() {
     }
 
 }
-
 function getCurrentLocation() {
     var infoWindow = new google.maps.InfoWindow({map: map});
     if (navigator.geolocation) {
