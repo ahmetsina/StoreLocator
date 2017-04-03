@@ -2,22 +2,22 @@
   "stores" : [
        {
         "title" : "Istanbul",
-        "address" : "Plain Adress",
-        "postCode" : "Post Code",
-        "phone" : "Phone",
+        "address" : "Bakırköy",
+        "postCode" : "34000",
+        "phone" : "02120142231",
         "location": {
-            "lat": 23.123412,
-            "lng": 42.213141
-          }
+            "lat": 45.015137,
+            "lng": 28.979530
+        }
   },
      {
       "title" : "Bursa",
-      "address" : "Plain Adress",
-      "postCode" : "Post Code",
-      "phone" : "Phone",
+      "address" : "İnegöl",
+      "postCode" : "16400",
+      "phone" : "02247159703",
       "location": {
-          "lat": 33.412324,
-          "lng": 54.123543
+          "lat": 41.015137,
+          "lng": 28.979530
         }
     },
     {
