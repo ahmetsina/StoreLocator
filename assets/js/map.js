@@ -1,27 +1,42 @@
 var map;
 var json;
-$.getJSON('data.json',function (data) {
+var data;
+var nearestP;
+$.getJSON('data.json', function (data) {
     window.json = data;
+    console.log(data);
 });
-var button = document.getElementById('findNearestButton');
-var input = document.getElementById('pac-input');
-
+var infoWindow = null;
 function initMap() {
+    var stores = window.json.stores;
 
 
     map = new google.maps.Map(document.getElementById("map"),{
-        center: { lat:-34.397, lng:150.644},
-        zoom:7,
+        center: { lat:33.347, lng:42.644},
+        zoom:9,
         mapTypeControl: false,
         streetViewControl: false
     });
+    $("#findNearestButton").click(function () {
 
-    //getCurrentLocation();
-    button.addListener('click', function () {
-        alert("Yess!");
-        getCurrentLocation();
+        if(infoWindow){
+            infoWindow.close();
+        }
+        if(getCurrentLocation())
+        {
+
+            nearestP = nearestPlace(map.getCenter().lat(),map.getCenter().lng(),stores);
+            var distance = haversine(map.getCenter().lat(),map.getCenter().lng(),nearestP.location.lat,nearestP.location.lng);
+            console.log(nearestP);
+            infoWindow.setContent("Distance : " + Math.round(distance) + " km from" + nearestP.title);
+
+        }
+
+
     });
+    //getCurrentLocation();
     setMapStyle(map);
+    var input = document.getElementById('pac-input');
     var autocomplete = new google.maps.places.Autocomplete(input);
 
     autocomplete.bindTo('bounds', map);
@@ -64,9 +79,9 @@ function initMap() {
         infowindow.open(map, marker);
     });
 
-    var stores = window.json.stores;
-    console.log(stores.length);
-    console.log(stores);
+
+
+
     for(var i = 0; i < stores.length; i++) {
 
         var storeLat = parseFloat(stores[i].location.lat);
@@ -84,8 +99,10 @@ function initMap() {
     }
 
 }
+
+
 function getCurrentLocation() {
-    var infoWindow = new google.maps.InfoWindow({map: map});
+    infoWindow = new google.maps.InfoWindow({map: map});
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {
@@ -94,7 +111,6 @@ function getCurrentLocation() {
             };
 
             infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
             map.setCenter(pos);
             map.setZoom(10);
         }, function() {
@@ -249,4 +265,16 @@ function haversine() {
     var a = Math.sin(dLat / 2) * Math.sin(dLat /2) + Math.sin(dLon / 2) * Math.sin(dLon /2) * Math.cos(lat1) * Math.cos(lat2);
     var c = 2 * Math.asin(Math.sqrt(a));
     return R * c;
+}
+
+function nearestPlace(center_lat,center_lng, points) {
+    var nearestPlace = points[0];
+    var nearestDistance = haversine(center_lat,center_lng,points[0].location.lat,points[0].location.lng);
+    for(var i=0; i < points.length; i++) {
+        var distance = haversine(center_lat,center_lng,points[i].location.lat,points[i].location.lng);
+        if( distance < nearestDistance){
+            nearestPlace = points[i];
+        }
+    }
+    return nearestPlace;
 }
